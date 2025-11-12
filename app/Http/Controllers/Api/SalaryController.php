@@ -11,17 +11,10 @@ class SalaryController extends Controller
     public function index()
     {
         $data = Salary::query()->latest()->paginate(10);
-
         return response()->json([
             'success' => true,
-            'message' => 'List of salaries retrieved successfully.',
-            'data' => $data->items(),
-            'meta' => [
-                'current_page' => $data->currentPage(),
-                'last_page' => $data->lastPage(),
-                'total' => $data->total(),
-                'per_page' => $data->perPage(),
-            ],
+            'message' => 'Daftar data gaji berhasil diambil.',
+            'data' => $data,
         ]);
     }
 
@@ -38,22 +31,40 @@ class SalaryController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Salary created successfully.',
+            'message' => 'Data gaji berhasil ditambahkan.',
             'data' => $salary,
         ], 201);
     }
 
-    public function show(Salary $salary)
+    public function show($id)
     {
+        $salary = Salary::find($id);
+
+        if (!$salary) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data gaji tidak ditemukan.',
+            ], 404);
+        }
+
         return response()->json([
             'success' => true,
-            'message' => 'Salary retrieved successfully.',
+            'message' => 'Detail data gaji berhasil diambil.',
             'data' => $salary,
         ]);
     }
 
-    public function update(Request $request, Salary $salary)
+    public function update(Request $request, $id)
     {
+        $salary = Salary::find($id);
+
+        if (!$salary) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data gaji tidak ditemukan.',
+            ], 404);
+        }
+
         $validated = $request->validate([
             'user_id' => 'sometimes|integer',
             'type' => 'sometimes|integer|min:1',
@@ -66,18 +77,27 @@ class SalaryController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Salary updated successfully.',
+            'message' => 'Data gaji berhasil diperbarui.',
             'data' => $salary,
         ]);
     }
 
-    public function destroy(Salary $salary)
+    public function destroy($id)
     {
+        $salary = Salary::find($id);
+
+        if (!$salary) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data gaji tidak ditemukan.',
+            ], 404);
+        }
+
         $salary->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Salary deleted successfully.',
-        ], 200);
+            'message' => 'Data gaji berhasil dihapus.',
+        ]);
     }
 }

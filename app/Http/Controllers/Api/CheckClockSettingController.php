@@ -11,17 +11,10 @@ class CheckClockSettingController extends Controller
     public function index()
     {
         $data = CheckClockSetting::query()->latest()->paginate(10);
-
         return response()->json([
             'success' => true,
-            'message' => 'List of check clock settings retrieved successfully.',
-            'data' => $data->items(),
-            'meta' => [
-                'current_page' => $data->currentPage(),
-                'last_page' => $data->lastPage(),
-                'total' => $data->total(),
-                'per_page' => $data->perPage(),
-            ],
+            'message' => 'Daftar pengaturan absensi berhasil diambil.',
+            'data' => $data,
         ]);
     }
 
@@ -36,44 +29,71 @@ class CheckClockSettingController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Check clock setting created successfully.',
+            'message' => 'Pengaturan absensi berhasil ditambahkan.',
             'data' => $setting,
         ], 201);
     }
 
-    public function show(CheckClockSetting $checkClockSetting)
+    public function show($id)
     {
+        $setting = CheckClockSetting::find($id);
+
+        if (!$setting) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pengaturan absensi tidak ditemukan.',
+            ], 404);
+        }
+
         return response()->json([
             'success' => true,
-            'message' => 'Check clock setting retrieved successfully.',
-            'data' => $checkClockSetting,
+            'message' => 'Detail pengaturan absensi berhasil diambil.',
+            'data' => $setting,
         ]);
     }
 
-    public function update(Request $request, CheckClockSetting $checkClockSetting)
+    public function update(Request $request, $id)
     {
+        $setting = CheckClockSetting::find($id);
+
+        if (!$setting) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pengaturan absensi tidak ditemukan.',
+            ], 404);
+        }
+
         $validated = $request->validate([
             'name' => 'sometimes|string|max:50',
             'type' => 'sometimes|integer|min:1',
             'deleted_at' => 'sometimes|nullable|string|max:30',
         ]);
 
-        $checkClockSetting->update($validated);
+        $setting->update($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Check clock setting updated successfully.',
-            'data' => $checkClockSetting,
+            'message' => 'Pengaturan absensi berhasil diperbarui.',
+            'data' => $setting,
         ]);
     }
 
-    public function destroy(CheckClockSetting $checkClockSetting)
+    public function destroy($id)
     {
-        $checkClockSetting->delete();
+        $setting = CheckClockSetting::find($id);
+
+        if (!$setting) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pengaturan absensi tidak ditemukan.',
+            ], 404);
+        }
+
+        $setting->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Check clock setting deleted successfully.',
-        ], 200);
+            'message' => 'Pengaturan absensi berhasil dihapus.',
+        ]);
     }
 }
