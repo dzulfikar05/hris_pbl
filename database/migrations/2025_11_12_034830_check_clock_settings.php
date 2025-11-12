@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('check_clock_settings', function (Blueprint $table) {
-            $table->bigInteger('id')->primary();
+            $table->bigInteger('id')->autoIncrement()->primary();
             $table->string('name', 50);
             $table->integer('type');
             $table->timestamps();

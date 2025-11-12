@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('salaries', function (Blueprint $table) {
-            $table->bigInteger('id')->primary();
+            $table->bigInteger('id')->autoIncrement()->primary();
             $table->bigInteger('user_id');
             $table->integer('type');
             $table->float('rate');
