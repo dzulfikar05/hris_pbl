@@ -11,7 +11,18 @@ class CheckClockSettingController extends Controller
     public function index()
     {
         $data = CheckClockSetting::query()->latest()->paginate(10);
-        return response()->json($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'List of check clock settings retrieved successfully.',
+            'data' => $data->items(),
+            'meta' => [
+                'current_page' => $data->currentPage(),
+                'last_page' => $data->lastPage(),
+                'total' => $data->total(),
+                'per_page' => $data->perPage(),
+            ],
+        ]);
     }
 
     public function store(Request $request)
@@ -22,12 +33,21 @@ class CheckClockSettingController extends Controller
         ]);
 
         $setting = CheckClockSetting::create($validated);
-        return response()->json($setting, 201);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Check clock setting created successfully.',
+            'data' => $setting,
+        ], 201);
     }
 
     public function show(CheckClockSetting $checkClockSetting)
     {
-        return response()->json($checkClockSetting);
+        return response()->json([
+            'success' => true,
+            'message' => 'Check clock setting retrieved successfully.',
+            'data' => $checkClockSetting,
+        ]);
     }
 
     public function update(Request $request, CheckClockSetting $checkClockSetting)
@@ -39,12 +59,21 @@ class CheckClockSettingController extends Controller
         ]);
 
         $checkClockSetting->update($validated);
-        return response()->json($checkClockSetting);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Check clock setting updated successfully.',
+            'data' => $checkClockSetting,
+        ]);
     }
 
     public function destroy(CheckClockSetting $checkClockSetting)
     {
         $checkClockSetting->delete();
-        return response()->noContent();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Check clock setting deleted successfully.',
+        ], 200);
     }
 }

@@ -11,7 +11,18 @@ class SalaryController extends Controller
     public function index()
     {
         $data = Salary::query()->latest()->paginate(10);
-        return response()->json($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'List of salaries retrieved successfully.',
+            'data' => $data->items(),
+            'meta' => [
+                'current_page' => $data->currentPage(),
+                'last_page' => $data->lastPage(),
+                'total' => $data->total(),
+                'per_page' => $data->perPage(),
+            ],
+        ]);
     }
 
     public function store(Request $request)
@@ -24,12 +35,21 @@ class SalaryController extends Controller
         ]);
 
         $salary = Salary::create($validated);
-        return response()->json($salary, 201);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Salary created successfully.',
+            'data' => $salary,
+        ], 201);
     }
 
     public function show(Salary $salary)
     {
-        return response()->json($salary);
+        return response()->json([
+            'success' => true,
+            'message' => 'Salary retrieved successfully.',
+            'data' => $salary,
+        ]);
     }
 
     public function update(Request $request, Salary $salary)
@@ -43,12 +63,21 @@ class SalaryController extends Controller
         ]);
 
         $salary->update($validated);
-        return response()->json($salary);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Salary updated successfully.',
+            'data' => $salary,
+        ]);
     }
 
     public function destroy(Salary $salary)
     {
         $salary->delete();
-        return response()->noContent();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Salary deleted successfully.',
+        ], 200);
     }
 }
